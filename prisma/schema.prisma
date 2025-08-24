@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                      @id @default(uuid())
+  email               String                      @unique
+  passwordHash        String
+  firstName           String
+  lastName            String
+  role                Role                        @default(STUDENT)
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  notifications       Notification[]
+  parentNotes         ParentNote[]
+  parentRelationships ParentStudentRelationship[] @relation("ParentSide")
+  studentProfile      StudentProfile?
+  profileImageUrl     String?
+}
+
+model StudentProfile {
+  id                  String                      @id @default(uuid())
+  userId              String                      @unique
+  graduationYear      Int
+  gpa                 Float?
+  satScore            Int?
+  actScore            Int?
+  targetCountries     String[]
+  intendedMajors      String[]
+  profileImageUrl     String?
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  applications        Application[]
+  parentRelationships ParentStudentRelationship[] @relation("StudentSide")
+  user                User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ParentStudentRelationship {
+  parentId         String
+  studentId        String
+  relationshipType String?
+  parent           User           @relation("ParentSide", fields: [parentId], references: [id], onDelete: Cascade)
+  student          StudentProfile @relation("StudentSide", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([parentId, studentId])
+}
+
+model University {
+  id                String        @id @default(uuid())
+  name              String
+  country           String
+  state             String?
+  city              String
+  usNewsRanking     Int?
+  acceptanceRate    Float?
+  applicationSystem String?
+  tuitionInState    Float?
+  tuitionOutState   Float?
+  applicationFee    Float?
+  deadlines         Json?
+  majorsOffered     String[]
+  description       String?
+  websiteUrl        String?
+  imageUrl          String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  applications      Application[]
+}
+
+model Application {
+  id              String                   @id @default(uuid())
+  studentId       String
+  universityId    String
+  applicationType ApplicationType
+  deadline        DateTime
+  status          ApplicationStatus
+  program         String
+  submittedDate   DateTime?
+  decisionDate    DateTime?
+  decisionType    DecisionType?
+  notes           String?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  student         StudentProfile           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  university      University               @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  requirements    ApplicationRequirement[]
+  notifications   Notification[]
+  parentNotes     ParentNote[]
+
+  @@unique([studentId, universityId, applicationType])
+}
+
+model ApplicationRequirement {
+  id              String            @id @default(uuid())
+  applicationId   String
+  requirementType String
+  status          RequirementStatus
+  deadline        DateTime?
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  application     Application       @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+model ParentNote {
+  id            String      @id @default(uuid())
+  applicationId String
+  parentId      String
+  content       String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  parent        User        @relation(fields: [parentId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id                   String       @id @default(uuid())
+  userId               String
+  title                String
+  content              String
+  isRead               Boolean      @default(false)
+  relatedApplicationId String?
+  createdAt            DateTime     @default(now())
+  relatedApplication   Application? @relation(fields: [relatedApplicationId], references: [id])
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  STUDENT
+  PARENT
+  TEACHER
+  ADMIN
+}
+
+enum ApplicationType {
+  EARLY_DECISION
+  EARLY_ACTION
+  REGULAR_DECISION
+  ROLLING_ADMISSION
+}
+
+enum ApplicationStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  UNDER_REVIEW
+  DECIDED
+}
+
+enum DecisionType {
+  ACCEPTED
+  REJECTED
+  WAITLISTED
+}
+
+enum RequirementStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
