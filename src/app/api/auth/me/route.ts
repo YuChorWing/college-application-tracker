@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // 导入上面的认证配置
+import { authOptions } from '@/lib/auth'; // 导入上面的认证配置
 import { prisma } from '@/lib/prisma';
 
 // 处理GET请求：获取当前用户信息
