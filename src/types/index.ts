@@ -61,6 +61,7 @@ export interface Application {
   decisionType?: DecisionType;
   notes?: string;
   program: string;
+  submittedDate: string;
   requirements: ApplicationRequirement[];
 }
 
