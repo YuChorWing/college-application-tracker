@@ -2,7 +2,6 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma'; // 导入Prisma单例
 import bcrypt from 'bcryptjs'; // 用于密码哈希验证
-import { JWT } from 'next-auth/jwt';
 
 // 定义认证配置
 export const authOptions: NextAuthOptions = {

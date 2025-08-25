@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { GraduationCap, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import Button from '@/components/Button';
@@ -14,16 +14,13 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { user, loading, login } = useAuth();
-  const router = useRouter();
 
   // 如果用户已登录，重定向到仪表板
   useEffect(() => {
-    debugger
     if (!loading && user) {
-      router.push('/app');
-      router.refresh();
+      redirect('/');
     }
-  }, [user, loading, router]);
+  }, [user, loading]);
 
   // 表单验证
   const validateForm = (): boolean => {

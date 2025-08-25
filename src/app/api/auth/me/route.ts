@@ -1,26 +1,39 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth'; // 导入上面的认证配置
 import { prisma } from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
 
-// 处理GET请求：获取当前用户信息
-export async function GET() {
+// 处理GET请求：解析JWT并返回用户信息
+export async function GET(request: Request) {
   try {
-    // 1. 从请求中获取会话（验证用户是否登录）
-    const session = await getServerSession(authOptions);
-
-    // 2. 未登录：返回401未授权
-    if (!session || !session.user?.email) {
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: '请先登录' },
-        { status: 401 } // 401 Unauthorized
+        { status: 401 }
       );
     }
-
-    // 3. 已登录：从数据库查询用户信息
+    const token = authHeader.replace('Bearer ', '');
+    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+    let payload: any;
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Token无效或已过期' },
+        { status: 401 }
+      );
+    }
+    // 类型保护，确保 payload 有 id 字段
+    const userId = typeof payload === 'object' && 'id' in payload ? (payload as any).id : undefined;
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Token无效' },
+        { status: 401 }
+      );
+    }
+    // 查询数据库获取完整用户信息
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      // 只返回需要的字段（避免暴露敏感信息如password）
+      where: { id: userId },
       select: {
         id: true,
         email: true,
@@ -31,24 +44,18 @@ export async function GET() {
         createdAt: true
       }
     });
-
-    // 4. 用户不存在（可能被删除）：返回404
     if (!user) {
       return NextResponse.json(
         { error: '用户不存在' },
-        { status: 404 } // 404 Not Found
+        { status: 404 }
       );
     }
-
-    // 5. 成功：返回用户信息
     return NextResponse.json(user);
-
   } catch (error) {
-    // 6. 服务器错误：返回500
     console.error('获取用户信息失败:', error);
     return NextResponse.json(
       { error: '服务器内部错误' },
-      { status: 500 } // 500 Internal Server Error
+      { status: 500 }
     );
   }
 }

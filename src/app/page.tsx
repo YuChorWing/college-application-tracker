@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import useSWR from 'swr';
+import { useAuth } from '@/contexts/AuthContext';
+import { redirect } from 'next/navigation';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
@@ -24,16 +26,21 @@ import NewApplicationForm from '@/components/NewApplicationForm';
 import { mockStudentDashboardData } from '@/mocks/studentDashboardData';
 
 const StudentDashboard: React.FC = () => {
+  const { user, loading } = useAuth();
   const [showAddApplication, setShowAddApplication] = useState(false);
   const dashboardData = mockStudentDashboardData;
-  /* const { data: dashboardData, error } = useSWR('/api/student/dashboard', fetcher);
-  
-  if (error) return <div className="p-8 text-center text-red-500">Failed to load dashboard</div>;
-  if (!dashboardData) return (
+
+  if (loading) return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     </div>
-  ); */
+  );
+  if (!user) {
+    return redirect('/login');
+  }
+  /* const { data: dashboardData, error } = useSWR('/api/student/dashboard', fetcher);
+  
+  if (error) return <div className="p-8 text-center text-red-500">Failed to load dashboard</div>; */
   
   const { 
     applications, 
