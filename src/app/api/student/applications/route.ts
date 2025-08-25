@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+/* import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
@@ -85,3 +85,4 @@ export async function GET() {
     { status: 405 }
   );
 }
+ */
