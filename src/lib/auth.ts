@@ -22,10 +22,11 @@ export const authOptions: NextAuthOptions = {
       },
       
       // 验证账号密码
-      async authorize(credentials) {
+      async authorize(credentials,req) {
         // 检查邮箱和密码是否提供
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('请输入邮箱和密码');
+          // throw new Error('请输入邮箱和密码');
+          return null;
         }
 
         // 从数据库查询用户
@@ -35,7 +36,8 @@ export const authOptions: NextAuthOptions = {
 
         // 检查用户是否存在
         if (!user) {
-          throw new Error('邮箱或密码错误');
+          // throw new Error('邮箱或密码错误');
+          return null;
         }
 
         // 检查密码是否正确（对比哈希值）
@@ -45,7 +47,8 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          throw new Error('邮箱或密码错误');
+          // throw new Error('邮箱或密码错误');
+          return null;
         }
 
         // 返回用户信息（会被存入JWT）
@@ -55,7 +58,7 @@ export const authOptions: NextAuthOptions = {
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
-          profileImageUrl: user.profileImageUrl
+          profileImageUrl: user.profileImageUrl ?? undefined
         };
       }
     })
