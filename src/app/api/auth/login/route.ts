@@ -54,8 +54,12 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Login error:', error);
+    // 返回更详细的错误信息以便调试
     return NextResponse.json(
-      { message: 'Something went wrong' },
+      { 
+        message: 'Something went wrong',
+        error: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }
