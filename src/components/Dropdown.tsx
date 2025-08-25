@@ -4,7 +4,7 @@ import Button from './Button';
 
 interface DropdownItem {
   label: string;
-  value: string;
+  value?: string;
   icon?: ReactNode;
   onClick?: () => void;
 }
@@ -22,6 +22,7 @@ interface DropdownProps {
   className?: string;
   /** 是否禁用 */
   disabled?: boolean;
+  children?: ReactNode;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({

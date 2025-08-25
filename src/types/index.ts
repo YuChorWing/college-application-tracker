@@ -26,6 +26,7 @@ export interface University {
   country: string;
   state?: string;
   city: string;
+  usNewsRanking?: number;
   ranking?: number;
   acceptanceRate?: number;
   applicationSystem?: string;
@@ -37,6 +38,7 @@ export interface University {
   description?: string;
   website?: string;
   logoUrl?: string;
+  imageUrl?: string;
 }
 
 // 申请要求类型

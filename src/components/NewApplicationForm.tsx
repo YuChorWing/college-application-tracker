@@ -163,7 +163,7 @@ const NewApplicationForm: React.FC<NewApplicationFormProps> = ({ onSuccess }) =>
               id="deadline"
               selected={field.value}
               // 正确处理日期变化：只传递有效日期
-              onChange={(date) => {
+              onChange={(date: Date | null) => {
                 if (date) {
                   field.onChange(date); // 传递Date类型给表单
                 }
