@@ -59,7 +59,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       item.onClick();
     }
     if (onSelect) {
-      onSelect(item.value);
+      onSelect(item.value??'');
     }
   };
 
