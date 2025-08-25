@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, MapPin, BookOpen, BarChart2, X, 
+import {
+  Search, MapPin, BookOpen, BarChart2, X,
   Filter, ChevronDown, Check, SlidersHorizontal
 } from 'lucide-react';
 import useSWR from 'swr';
@@ -27,7 +27,7 @@ const UniversitySearch: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [results, setResults] = useState<University[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   // 获取筛选选项数据
   const { data: filterOptions } = useSWR('/api/universities/filters', fetcher);
 
@@ -46,7 +46,7 @@ const UniversitySearch: React.FC = () => {
       params.append('minRanking', selectedFilters.minRanking.toString());
       params.append('maxRanking', selectedFilters.maxRanking.toString());
       selectedFilters.applicationSystems.forEach(a => params.append('system', a));
-      
+
       const response = await fetch(`/api/universities?${params.toString()}`);
       const data = await response.json();
       setResults(data);
@@ -62,7 +62,7 @@ const UniversitySearch: React.FC = () => {
     const delayDebounceFn = setTimeout(() => {
       searchUniversities();
     }, 500);
-    
+
     return () => clearTimeout(delayDebounceFn);
   }, [selectedFilters]);
 
@@ -148,17 +148,17 @@ const UniversitySearch: React.FC = () => {
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <Button 
-            type="submit" 
-            variant="primary" 
+          <Button
+            type="submit"
+            variant="primary"
             className="rounded-l-none"
             isLoading={loading}
           >
             Search
           </Button>
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             className="hidden md:flex items-center"
             onClick={() => setShowFilters(true)}
           >
@@ -166,53 +166,53 @@ const UniversitySearch: React.FC = () => {
             Filters
           </Button>
         </div>
-        
+
         {/* 活跃筛选器标签 */}
-        {(selectedFilters.countries.length > 0 || 
-          selectedFilters.majors.length > 0 || 
+        {(selectedFilters.countries.length > 0 ||
+          selectedFilters.majors.length > 0 ||
           selectedFilters.applicationSystems.length > 0 ||
           selectedFilters.minAcceptance > 0 ||
           selectedFilters.maxAcceptance < 100 ||
           selectedFilters.minRanking > 1 ||
           selectedFilters.maxRanking < 200) && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            <span className="text-sm text-gray-600 self-center">Active filters:</span>
-            
-            {selectedFilters.countries.map(country => (
-              <span key={`country-${country}`} className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
-                {country}
-                <button 
-                  type="button" 
-                  onClick={() => toggleCountry(country)}
-                  className="ml-1 text-gray-500 hover:text-gray-700"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            ))}
-            
-            {selectedFilters.majors.map(major => (
-              <span key={`major-${major}`} className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
-                {major}
-                <button 
-                  type="button" 
-                  onClick={() => toggleMajor(major)}
-                  className="ml-1 text-gray-500 hover:text-gray-700"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            ))}
-            
-            <button 
-              type="button" 
-              onClick={clearFilters}
-              className="text-sm text-blue-600 hover:text-blue-800 ml-2"
-            >
-              Clear all
-            </button>
-          </div>
-        )}
+            <div className="flex flex-wrap gap-2 mt-3">
+              <span className="text-sm text-gray-600 self-center">Active filters:</span>
+
+              {selectedFilters.countries.map(country => (
+                <span key={`country-${country}`} className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
+                  {country}
+                  <button
+                    type="button"
+                    onClick={() => toggleCountry(country)}
+                    className="ml-1 text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+
+              {selectedFilters.majors.map(major => (
+                <span key={`major-${major}`} className="inline-flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm">
+                  {major}
+                  <button
+                    type="button"
+                    onClick={() => toggleMajor(major)}
+                    className="ml-1 text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-sm text-blue-600 hover:text-blue-800 ml-2"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
       </form>
 
       {/* 搜索结果 */}
@@ -275,8 +275,8 @@ const UniversitySearch: React.FC = () => {
               <div key={university.id} className="bg-white rounded-lg border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="h-32 bg-gray-100 relative">
                   {university.imageUrl && (
-                    <img 
-                      src={university.imageUrl} 
+                    <img
+                      src={university.imageUrl}
                       alt={university.name}
                       className="w-full h-full object-cover"
                     />
@@ -293,7 +293,7 @@ const UniversitySearch: React.FC = () => {
                     <MapPin className="h-3.5 w-3.5 mr-1" />
                     {university.city}, {university.state}, {university.country}
                   </div>
-                  
+
                   <div className="mt-3 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Acceptance Rate</span>
@@ -308,17 +308,17 @@ const UniversitySearch: React.FC = () => {
                       <span className="font-medium">${university.applicationFee}</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 flex justify-between items-center">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => console.log('View details', university.id)}
                     >
                       Details
                     </Button>
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       size="sm"
                       onClick={() => addToApplications(university)}
                     >
@@ -344,14 +344,14 @@ const UniversitySearch: React.FC = () => {
           <div>
             <h3 className="font-semibold text-gray-800 mb-3">Countries</h3>
             <div className="space-y-2">
-              {filterOptions?.countries.map(country => (
+              {filterOptions?.countries.map((country: any) => (
                 <div key={country} className="flex items-center">
                   <Checkbox
                     id={`country-${country}`}
                     checked={selectedFilters.countries.includes(country)}
                     onChange={() => toggleCountry(country)}
                   />
-                  <label 
+                  <label
                     htmlFor={`country-${country}`}
                     className="ml-2 text-gray-700 text-sm cursor-pointer"
                   >
@@ -366,14 +366,14 @@ const UniversitySearch: React.FC = () => {
           <div>
             <h3 className="font-semibold text-gray-800 mb-3">Majors Offered</h3>
             <div className="space-y-2">
-              {filterOptions?.majors.slice(0, 10).map(major => (
+              {filterOptions?.majors.slice(0, 10).map((major: any) => (
                 <div key={major} className="flex items-center">
                   <Checkbox
                     id={`major-${major}`}
                     checked={selectedFilters.majors.includes(major)}
                     onChange={() => toggleMajor(major)}
                   />
-                  <label 
+                  <label
                     htmlFor={`major-${major}`}
                     className="ml-2 text-gray-700 text-sm cursor-pointer"
                   >
@@ -400,7 +400,7 @@ const UniversitySearch: React.FC = () => {
                     checked={selectedFilters.applicationSystems.includes(system)}
                     onChange={() => toggleApplicationSystem(system)}
                   />
-                  <label 
+                  <label
                     htmlFor={`system-${system}`}
                     className="ml-2 text-gray-700 text-sm cursor-pointer"
                   >
@@ -421,9 +421,11 @@ const UniversitySearch: React.FC = () => {
               max={100}
               step={1}
               value={[selectedFilters.minAcceptance, selectedFilters.maxAcceptance]}
-              onValueChange={(value) => {
-                updateFilter('minAcceptance', value[0]);
-                updateFilter('maxAcceptance', value[1]);
+              onValueChange={value => {
+                if (Array.isArray(value)) {
+                  updateFilter('minAcceptance', value[0]);
+                  updateFilter('maxAcceptance', value[1]);
+                }
               }}
             />
           </div>
@@ -438,9 +440,11 @@ const UniversitySearch: React.FC = () => {
               max={200}
               step={1}
               value={[selectedFilters.minRanking, selectedFilters.maxRanking]}
-              onValueChange={(value) => {
-                updateFilter('minRanking', value[0]);
-                updateFilter('maxRanking', value[1]);
+              onValueChange={value => {
+                if (Array.isArray(value)) {
+                  updateFilter('minRanking', value[0]);
+                  updateFilter('maxRanking', value[1]);
+                }
               }}
             />
           </div>
